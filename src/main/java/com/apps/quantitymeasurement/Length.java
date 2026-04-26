@@ -1,7 +1,5 @@
 package com.apps.quantitymeasurement;
 
-import java.util.Objects;
-
 public class Length {
 
     private final double value;
@@ -9,7 +7,9 @@ public class Length {
 
     public enum LengthUnit {
         FEET(12.0),
-        INCHES(1.0);
+        INCHES(1.0),
+        YARDS(36.0),
+        CENTIMETERS(0.393701);
 
         private final double conversionFactor;
 
@@ -31,7 +31,7 @@ public class Length {
     }
 
     private double toInches() {
-        return this.value * this.unit.getConversionFactor();
+        return value * unit.getConversionFactor();
     }
 
     @Override
@@ -40,11 +40,7 @@ public class Length {
         if (obj == null || getClass() != obj.getClass()) return false;
 
         Length other = (Length) obj;
-        return Double.compare(this.toInches(), other.toInches()) == 0;
-    }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(toInches());
+        return Math.abs(this.toInches() - other.toInches()) < 0.0001;
     }
 }
