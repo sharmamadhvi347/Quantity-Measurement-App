@@ -1,52 +1,35 @@
 package com.apps.quantitymeasurement;
 
-import java.util.Objects;
-
 public class QuantityMeasurementApp {
 
-    // Feet Class
-    public static class Feet {
-        private final double value;
-
-        public Feet(double value) {
-            this.value = value;
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj) return true;
-            if (obj == null || getClass() != obj.getClass()) return false;
-
-            Feet other = (Feet) obj;
-            return Double.compare(this.value, other.value) == 0;
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(value);
-        }
+    public static boolean demonstrateLengthEquality(Length l1, Length l2) {
+        return l1.equals(l2);
     }
 
-    // Inches Class
-    public static class Inches {
-        private final double value;
+    public static void demonstrateFeetEquality() {
+        Length l1 = new Length(1.0, Length.LengthUnit.FEET);
+        Length l2 = new Length(1.0, Length.LengthUnit.FEET);
 
-        public Inches(double value) {
-            this.value = value;
-        }
+        System.out.println("Feet Equal: " + l1.equals(l2));
+    }
 
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj) return true;
-            if (obj == null || getClass() != obj.getClass()) return false;
+    public static void demonstrateInchesEquality() {
+        Length l1 = new Length(1.0, Length.LengthUnit.INCHES);
+        Length l2 = new Length(1.0, Length.LengthUnit.INCHES);
 
-            Inches other = (Inches) obj;
-            return Double.compare(this.value, other.value) == 0;
-        }
+        System.out.println("Inches Equal: " + l1.equals(l2));
+    }
 
-        @Override
-        public int hashCode() {
-            return Objects.hash(value);
-        }
+    public static void demonstrateFeetInchesComparison() {
+        Length l1 = new Length(1.0, Length.LengthUnit.FEET);
+        Length l2 = new Length(12.0, Length.LengthUnit.INCHES);
+
+        System.out.println("1 ft == 12 inches ? " + l1.equals(l2));
+    }
+
+    public static void main(String[] args) {
+        demonstrateFeetEquality();
+        demonstrateInchesEquality();
+        demonstrateFeetInchesComparison();
     }
 }
