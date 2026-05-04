@@ -40,6 +40,7 @@ public class Length {
     }
 
     private boolean compare(Length that) {
+        return Math.abs(this.convertToBaseUnit() - that.convertToBaseUnit()) < 0.01;
         double thisInches = this.convertToBaseUnit();
         double thatInches = that.convertToBaseUnit();
         return Math.abs(thisInches - thatInches) < 0.01;
@@ -62,6 +63,7 @@ public class Length {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Length)) return false;
+        return compare((Length) o);
         Length that = (Length) o;
         return compare(that);
     }
@@ -74,6 +76,24 @@ public class Length {
         double converted = inches / targetUnit.getConversionFactor();
         return new Length(round(converted), targetUnit);
     }
+
+    public Length add(Length that) {
+        return add(that, this.unit);
+    }
+
+    public Length add(Length that, LengthUnit targetUnit) {
+        if (that == null || targetUnit == null) {
+            throw new IllegalArgumentException("Invalid input");
+        }
+
+        double sumInches = this.convertToBaseUnit() + that.convertToBaseUnit();
+        double result = sumInches / targetUnit.getConversionFactor();
+
+        return new Length(round(result), targetUnit);
+    }
+
+    private double round(double value) {
+        return Math.round(value * 100.0) / 100.0;
 
     // 🔥 UC6 ADD METHOD
     public Length add(Length that) {
