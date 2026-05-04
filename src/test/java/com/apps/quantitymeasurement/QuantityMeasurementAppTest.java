@@ -92,4 +92,62 @@ public class QuantityMeasurementAppTest {
 
         assertTrue(result.equals(new Length(0.67, LengthUnit.YARDS)));
     }
+
+    @Test
+    public void kilogramEquals1000Grams() {
+        assertTrue(new Weight(1, WeightUnit.KILOGRAM)
+                .equals(new Weight(1000, WeightUnit.GRAM)));
+    }
+
+    @Test
+    public void kilogramNotEqualToPound() {
+        assertFalse(new Weight(1, WeightUnit.KILOGRAM)
+                .equals(new Weight(1, WeightUnit.POUND)));
+    }
+
+    @Test
+    public void kilogramEqualsApproxPound() {
+        assertTrue(new Weight(1, WeightUnit.KILOGRAM)
+                .equals(new Weight(2.20462, WeightUnit.POUND)));
+    }
+
+    @Test
+    public void gramEqualsPound() {
+        assertTrue(new Weight(453.592, WeightUnit.GRAM)
+                .equals(new Weight(1, WeightUnit.POUND)));
+    }
+
+    @Test
+    public void kilogramEqualsTonne() {
+        assertTrue(new Weight(1000, WeightUnit.KILOGRAM)
+                .equals(new Weight(1, WeightUnit.TONNE)));
+    }
+
+    @Test
+    public void kilogramToGramConversion() {
+        Weight result = new Weight(1, WeightUnit.KILOGRAM)
+                .convertTo(WeightUnit.GRAM);
+        assertEquals(1000.0, result.getValue());
+    }
+
+    @Test
+    public void poundToKilogramConversion() {
+        Weight result = new Weight(2.20462, WeightUnit.POUND)
+                .convertTo(WeightUnit.KILOGRAM);
+        assertEquals(1.0, result.getValue());
+    }
+
+    @Test
+    public void addKilogramAndGram() {
+        Weight result = new Weight(1, WeightUnit.KILOGRAM)
+                .add(new Weight(1000, WeightUnit.GRAM));
+        assertEquals(2.0, result.getValue());
+    }
+
+    @Test
+    public void addWeightsWithTargetUnit() {
+        Weight result = new Weight(1, WeightUnit.KILOGRAM)
+                .add(new Weight(1000, WeightUnit.GRAM), WeightUnit.GRAM);
+        assertEquals(2000.0, result.getValue());
+    }
 }
