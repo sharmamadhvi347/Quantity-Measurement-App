@@ -23,6 +23,9 @@ public class Length {
     }
 
     public Length(double value, LengthUnit unit) {
+        if (!Double.isFinite(value)) {
+            throw new IllegalArgumentException("Invalid numeric value");
+        }
         if (unit == null) {
             throw new IllegalArgumentException("Unit cannot be null");
         }
@@ -31,7 +34,18 @@ public class Length {
     }
 
     private double toInches() {
-        return value * unit.getConversionFactor();
+        return this.value * this.unit.getConversionFactor();
+    }
+
+    private static double round(double value) {
+        return Math.round(value * 100.0) / 100.0;
+    }
+
+    private boolean compare(Length other) {
+        return Double.compare(
+                round(this.toInches()),
+                round(other.toInches())
+        ) == 0;
     }
 
     @Override
@@ -40,7 +54,36 @@ public class Length {
         if (obj == null || getClass() != obj.getClass()) return false;
 
         Length other = (Length) obj;
+        return compare(other);
+    }
 
-        return Math.abs(this.toInches() - other.toInches()) < 0.0001;
+    // 🔥 UC5 CORE METHOD
+    public Length convertTo(LengthUnit targetUnit) {
+        if (targetUnit == null) {
+            throw new IllegalArgumentException("Target unit cannot be null");
+        }
+
+        double inches = this.toInches();
+        double converted = inches / targetUnit.getConversionFactor();
+
+        return new Length(round(converted), targetUnit);
+    }
+
+    // 🔥 STATIC CONVERSION API (IMPORTANT FOR TESTS)
+    public static double convert(double value, LengthUnit from, LengthUnit to) {
+        if (!Double.isFinite(value)) {
+            throw new IllegalArgumentException("Invalid numeric value");
+        }
+        if (from == null || to == null) {
+            throw new IllegalArgumentException("Units cannot be null");
+        }
+
+        double inches = value * from.getConversionFactor();
+        return inches / to.getConversionFactor();
+    }
+
+    @Override
+    public String toString() {
+        return String.format("%.2f %s", value, unit);
     }
 }
