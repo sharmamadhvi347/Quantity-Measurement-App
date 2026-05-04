@@ -25,6 +25,11 @@ public class Length {
     public Length(double value, LengthUnit unit) {
         if (unit == null || !Double.isFinite(value)) {
             throw new IllegalArgumentException("Invalid length");
+        if (!Double.isFinite(value)) {
+            throw new IllegalArgumentException("Invalid numeric value");
+        }
+        if (unit == null) {
+            throw new IllegalArgumentException("Unit cannot be null");
         }
         this.value = value;
         this.unit = unit;
@@ -38,6 +43,19 @@ public class Length {
         double thisInches = this.convertToBaseUnit();
         double thatInches = that.convertToBaseUnit();
         return Math.abs(thisInches - thatInches) < 0.01;
+    private double toInches() {
+        return this.value * this.unit.getConversionFactor();
+    }
+
+    private static double round(double value) {
+        return Math.round(value * 100.0) / 100.0;
+    }
+
+    private boolean compare(Length other) {
+        return Double.compare(
+                round(this.toInches()),
+                round(other.toInches())
+        ) == 0;
     }
 
     @Override
@@ -75,6 +93,33 @@ public class Length {
 
     private double round(double value) {
         return Math.round(value * 100.0) / 100.0;
+        Length other = (Length) obj;
+        return compare(other);
+    }
+
+    // 🔥 UC5 CORE METHOD
+    public Length convertTo(LengthUnit targetUnit) {
+        if (targetUnit == null) {
+            throw new IllegalArgumentException("Target unit cannot be null");
+        }
+
+        double inches = this.toInches();
+        double converted = inches / targetUnit.getConversionFactor();
+
+        return new Length(round(converted), targetUnit);
+    }
+
+    // 🔥 STATIC CONVERSION API (IMPORTANT FOR TESTS)
+    public static double convert(double value, LengthUnit from, LengthUnit to) {
+        if (!Double.isFinite(value)) {
+            throw new IllegalArgumentException("Invalid numeric value");
+        }
+        if (from == null || to == null) {
+            throw new IllegalArgumentException("Units cannot be null");
+        }
+
+        double inches = value * from.getConversionFactor();
+        return inches / to.getConversionFactor();
     }
 
     @Override
