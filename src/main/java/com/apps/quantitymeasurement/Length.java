@@ -23,24 +23,58 @@ public class Length {
     }
 
     public Length(double value, LengthUnit unit) {
-        if (unit == null) {
-            throw new IllegalArgumentException("Unit cannot be null");
+        if (unit == null || !Double.isFinite(value)) {
+            throw new IllegalArgumentException("Invalid length");
         }
         this.value = value;
         this.unit = unit;
     }
 
-    private double toInches() {
-        return value * unit.getConversionFactor();
+    private double convertToBaseUnit() {
+        return this.value * this.unit.getConversionFactor();
+    }
+
+    private boolean compare(Length that) {
+        return Math.abs(this.convertToBaseUnit() - that.convertToBaseUnit()) < 0.01;
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null || getClass() != obj.getClass()) return false;
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Length)) return false;
+        return compare((Length) o);
+    }
 
-        Length other = (Length) obj;
+    public Length convertTo(LengthUnit targetUnit) {
+        if (targetUnit == null) {
+            throw new IllegalArgumentException("Target unit cannot be null");
+        }
+        double inches = convertToBaseUnit();
+        double converted = inches / targetUnit.getConversionFactor();
+        return new Length(round(converted), targetUnit);
+    }
 
-        return Math.abs(this.toInches() - other.toInches()) < 0.0001;
+    public Length add(Length that) {
+        return add(that, this.unit);
+    }
+
+    public Length add(Length that, LengthUnit targetUnit) {
+        if (that == null || targetUnit == null) {
+            throw new IllegalArgumentException("Invalid input");
+        }
+
+        double sumInches = this.convertToBaseUnit() + that.convertToBaseUnit();
+        double result = sumInches / targetUnit.getConversionFactor();
+
+        return new Length(round(result), targetUnit);
+    }
+
+    private double round(double value) {
+        return Math.round(value * 100.0) / 100.0;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("%.2f %s", value, unit);
     }
 }
