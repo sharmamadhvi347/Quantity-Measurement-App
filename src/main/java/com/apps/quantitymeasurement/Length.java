@@ -5,23 +5,6 @@ public class Length {
     private final double value;
     private final LengthUnit unit;
 
-    public enum LengthUnit {
-        FEET(12.0),
-        INCHES(1.0),
-        YARDS(36.0),
-        CENTIMETERS(0.393701);
-
-        private final double conversionFactor;
-
-        LengthUnit(double conversionFactor) {
-            this.conversionFactor = conversionFactor;
-        }
-
-        public double getConversionFactor() {
-            return conversionFactor;
-        }
-    }
-
     public Length(double value, LengthUnit unit) {
         if (unit == null || !Double.isFinite(value)) {
             throw new IllegalArgumentException("Invalid length");
@@ -30,12 +13,12 @@ public class Length {
         this.unit = unit;
     }
 
-    private double convertToBaseUnit() {
-        return this.value * this.unit.getConversionFactor();
+    private double toBase() {
+        return unit.convertToBaseUnit(value);
     }
 
     private boolean compare(Length that) {
-        return Math.abs(this.convertToBaseUnit() - that.convertToBaseUnit()) < 0.01;
+        return Math.abs(this.toBase() - that.toBase()) < 0.01;
     }
 
     @Override
@@ -49,9 +32,9 @@ public class Length {
         if (targetUnit == null) {
             throw new IllegalArgumentException("Target unit cannot be null");
         }
-        double inches = convertToBaseUnit();
-        double converted = inches / targetUnit.getConversionFactor();
-        return new Length(round(converted), targetUnit);
+        double base = toBase();
+        double converted = targetUnit.convertFromBaseUnit(base);
+        return new Length(converted, targetUnit);
     }
 
     public Length add(Length that) {
@@ -63,14 +46,10 @@ public class Length {
             throw new IllegalArgumentException("Invalid input");
         }
 
-        double sumInches = this.convertToBaseUnit() + that.convertToBaseUnit();
-        double result = sumInches / targetUnit.getConversionFactor();
+        double sumBase = this.toBase() + that.toBase();
+        double result = targetUnit.convertFromBaseUnit(sumBase);
 
-        return new Length(round(result), targetUnit);
-    }
-
-    private double round(double value) {
-        return Math.round(value * 100.0) / 100.0;
+        return new Length(result, targetUnit);
     }
 
     @Override
