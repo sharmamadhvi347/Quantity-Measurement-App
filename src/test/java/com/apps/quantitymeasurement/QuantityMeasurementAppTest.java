@@ -82,4 +82,63 @@ public class QuantityMeasurementAppTest {
 
         assertTrue(result.getValue() > 4000); // ~4785 ml
     }
+
+    // -------------------- UC12 TESTS --------------------
+
+    @Test
+    public void testSubtraction_SameUnit() {
+        Quantity<LengthUnit> a = new Quantity<>(10, LengthUnit.FEET);
+        Quantity<LengthUnit> b = new Quantity<>(5, LengthUnit.FEET);
+
+        assertEquals(new Quantity<>(5, LengthUnit.FEET), a.subtract(b));
+    }
+
+    @Test
+    public void testSubtraction_CrossUnit() {
+        Quantity<LengthUnit> a = new Quantity<>(10, LengthUnit.FEET);
+        Quantity<LengthUnit> b = new Quantity<>(6, LengthUnit.INCHES);
+
+        assertEquals(new Quantity<>(9.5, LengthUnit.FEET), a.subtract(b));
+    }
+
+    @Test
+    public void testSubtraction_ExplicitUnit() {
+        Quantity<LengthUnit> a = new Quantity<>(10, LengthUnit.FEET);
+        Quantity<LengthUnit> b = new Quantity<>(6, LengthUnit.INCHES);
+
+        assertEquals(new Quantity<>(114, LengthUnit.INCHES),
+                a.subtract(b, LengthUnit.INCHES));
+    }
+
+    @Test
+    public void testDivision_SameUnit() {
+        Quantity<WeightUnit> a = new Quantity<>(10, WeightUnit.KILOGRAM);
+        Quantity<WeightUnit> b = new Quantity<>(5, WeightUnit.KILOGRAM);
+
+        assertEquals(2.0, a.divide(b));
+    }
+
+    @Test
+    public void testDivision_CrossUnit() {
+        Quantity<LengthUnit> a = new Quantity<>(24, LengthUnit.INCHES);
+        Quantity<LengthUnit> b = new Quantity<>(2, LengthUnit.FEET);
+
+        assertEquals(1.0, a.divide(b));
+    }
+
+    @Test
+    public void testDivision_ByZero() {
+        Quantity<LengthUnit> a = new Quantity<>(10, LengthUnit.FEET);
+        Quantity<LengthUnit> b = new Quantity<>(0, LengthUnit.FEET);
+
+        assertThrows(ArithmeticException.class, () -> a.divide(b));
+    }
+
+    @Test
+    public void testSubtraction_CrossCategory() {
+        Quantity<LengthUnit> a = new Quantity<>(10, LengthUnit.FEET);
+        Quantity<WeightUnit> b = new Quantity<>(5, WeightUnit.KILOGRAM);
+
+        assertThrows(IllegalArgumentException.class, () -> a.subtract((Quantity) b));
+    }
 }
