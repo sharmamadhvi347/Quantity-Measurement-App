@@ -47,4 +47,39 @@ public class QuantityMeasurementAppTest {
 
         assertEquals(1500.0, result.getValue());
     }
+
+    @Test
+    public void volumeLiterEqualsMilliliter() {
+        Quantity<VolumeUnit> v1 = new Quantity<>(1, VolumeUnit.LITRE);
+        Quantity<VolumeUnit> v2 = new Quantity<>(1000, VolumeUnit.MILLILITRE);
+
+        assertTrue(v1.equals(v2));
+    }
+
+    @Test
+    public void convertLiterToMilliliter() {
+        Quantity<VolumeUnit> v = new Quantity<>(1, VolumeUnit.LITRE);
+
+        assertEquals(1000.0, v.convertTo(VolumeUnit.MILLILITRE));
+    }
+
+    @Test
+    public void addVolumeLitersAndMilliliters() {
+        Quantity<VolumeUnit> v1 = new Quantity<>(1, VolumeUnit.LITRE);
+        Quantity<VolumeUnit> v2 = new Quantity<>(1000, VolumeUnit.MILLILITRE);
+
+        Quantity<VolumeUnit> result = v1.add(v2);
+
+        assertEquals(2.0, result.getValue());
+    }
+
+    @Test
+    public void addVolumeWithTargetUnit() {
+        Quantity<VolumeUnit> v1 = new Quantity<>(1, VolumeUnit.LITRE);
+        Quantity<VolumeUnit> v2 = new Quantity<>(1, VolumeUnit.GALLON);
+
+        Quantity<VolumeUnit> result = v1.add(v2, VolumeUnit.MILLILITRE);
+
+        assertTrue(result.getValue() > 4000); // ~4785 ml
+    }
 }
